@@ -72,7 +72,7 @@ class Invertible1x1Conv(Flow):
         self.use_lu = use_lu
         Q, _ = torch.linalg.qr(torch.randn(self.num_channels, self.num_channels))
         if use_lu:
-            P, L, U = torch.lu_unpack(*Q.lu())
+            P, L, U = torch.linalg.lu(Q)
             self.register_buffer("P", P)  # remains fixed during optimization
             self.L = nn.Parameter(L)  # lower triangular portion
             S = U.diag()  # "crop out" the diagonal to its own parameter
@@ -151,7 +151,7 @@ class InvertibleAffine(Flow):
         self.use_lu = use_lu
         Q, _ = torch.linalg.qr(torch.randn(self.num_channels, self.num_channels))
         if use_lu:
-            P, L, U = torch.lu_unpack(*Q.lu())
+            P, L, U = torch.linalg.lu(Q)
             self.register_buffer("P", P)  # remains fixed during optimization
             self.L = nn.Parameter(L)  # lower triangular portion
             S = U.diag()  # "crop out" the diagonal to its own parameter
