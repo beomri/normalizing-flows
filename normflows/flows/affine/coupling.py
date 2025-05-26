@@ -135,6 +135,11 @@ class AffineCoupling(Flow):
                 scale = torch.sigmoid(scale_ + 2)
                 z2 = z2 / scale + shift
                 log_det = -torch.sum(torch.log(scale), dim=list(range(1, shift.dim())))
+            elif self.scale_map == "sigmoid_bias":
+                epsilon = 1e-3
+                scale = torch.sigmoid(scale_ + 2) * (1 - epsilon) + epsilon
+                z2 = z2 / scale + shift
+                log_det = -torch.sum(torch.log(scale), dim=list(range(1, shift.dim())))
             elif self.scale_map == "sigmoid_inv":
                 scale = torch.sigmoid(scale_ + 2)
                 z2 = z2 * scale + shift
@@ -157,6 +162,11 @@ class AffineCoupling(Flow):
                 log_det = -torch.sum(scale_, dim=list(range(1, shift.dim())))
             elif self.scale_map == "sigmoid":
                 scale = torch.sigmoid(scale_ + 2)
+                z2 = (z2 - shift) * scale
+                log_det = torch.sum(torch.log(scale), dim=list(range(1, shift.dim())))
+            elif self.scale_map == "sigmoid_bias":
+                epsilon = 1e-3
+                scale = torch.sigmoid(scale_ + 2) * (1 - epsilon) + epsilon
                 z2 = (z2 - shift) * scale
                 log_det = torch.sum(torch.log(scale), dim=list(range(1, shift.dim())))
             elif self.scale_map == "sigmoid_inv":
