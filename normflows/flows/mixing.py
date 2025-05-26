@@ -92,13 +92,15 @@ class Invertible1x1Conv(Flow):
             self.sign_S * torch.exp(self.log_S)
         )
         if inverse:
-            if self.log_S.dtype == torch.float64:
-                L_inv = torch.inverse(L)
-                U_inv = torch.inverse(U)
-            else:
-                L_inv = torch.inverse(L.double()).type(self.log_S.dtype)
-                U_inv = torch.inverse(U.double()).type(self.log_S.dtype)
-            W = U_inv @ L_inv @ self.P.t()
+            # if self.log_S.dtype == torch.float64:
+            #     L_inv = torch.inverse(L)
+            #     U_inv = torch.inverse(U)
+            # else:
+            #     L_inv = torch.inverse(L.double()).type(self.log_S.dtype)
+            #     U_inv = torch.inverse(U.double()).type(self.log_S.dtype)
+            # W = U_inv @ L_inv @ self.P.t()
+            W1 = torch.linalg.solve(L, self.P.t()) 
+            W = torch.linalg.solve(U, W1)
         else:
             W = self.P @ L @ U
         return W
